@@ -1,17 +1,16 @@
 #' Creates a 3x3 neighbour matrix for a given element
 #'
+#' @author Selina Müller
+#'
 #' @param env Environment containing game matrix: M and dataframe: colorMapping
 #' @param i row index of matrix element
 #' @param j column index of matrix element
 #'
 #' @return 3x3 matrix of neighbours for an element with given indices
-
+#' 
 getNeighbours <- function(env, i,j) {
-  # return 3x3 Matrix (M(i,j) in der Mitte und seine Nachbarn
   
   ncM <- ncol(env$M)
-  #nrow == ncol, da es eine quadratische Matrix ist
-  #nrM <- nrow(M)
   N <- matrix(nrow = 3, ncol = 3);
   
   if(i == 1 || i == ncM || j == 1 || j == ncM ){
