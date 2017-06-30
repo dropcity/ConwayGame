@@ -53,13 +53,15 @@ getNeighbours <- function(env, i,j) {
 }
 
 
-#' Implements the Game of live Rules. 
+#' @titel implement the Game of live Rules
+#'
+#' @description decides if the matrix central cell schould live or die depending of the number and the state of it neighbours
 #' 
 #' @author Leila Feddoul
 #'
 #' @param N  3x3 matrix of neighbours for an element with given indices.
 #'
-#' @return 1 if the central cell of the matrix should leben or 0 when it should die.
+#' @return 1 if the central cell of the matrix should live or 0 when it should die.
 #'
 #' @examples
 #' N = matrix( c(0, 0, 0, 0, 1, 0, 0, 0, 0), nrow=3, ncol=3) 
@@ -186,8 +188,9 @@ save <- function(save_path, iter_id) {
   dev.off()
 }
 
-
-#' creates a random nxn matrix of ones and zeros.
+#' @title generate a random matrix
+#'
+#' @description creates a random nxn matrix of ones and zeros.
 #' 
 #' @author Leila Feddoul
 #' 
@@ -236,8 +239,9 @@ findPatternMatch <- function(env, pattern, colNum) {
   }
 }
 
-
-#' checks if two matrices are equal : are both of them matrices and have the same dimension
+#' @titel matrix equality check
+#'
+#' @description checks if two matrices are equal : are both of them matrices and have the same dimension
 #' 
 #' @author Leila Feddoul
 #' 
@@ -253,8 +257,9 @@ matequal <- function(x, y)
   is.matrix(x) && is.matrix(y) && dim(x) == dim(y) && all(x == y)
 
 
-#' Alternative implementation for findPatternMatch function.
-#' Searches for given pattern in the cell matrix and colors it if found
+#' @titel find out pattern matching   
+#'
+#' @description Searches for given pattern in the cell matrix and colors it if found ( Alternative implementation for findPatternMatch function)
 #' 
 #' @author Leila Feddoul
 #' 
