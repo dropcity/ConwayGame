@@ -173,13 +173,6 @@ computeAll <- function(env) {
 #' env$colorMapping <- 
 #' 
 visualise <- function(env, plotname) {
-  tryCatch({
-    library(plotrix)
-  }, error = function(e) {
-    install.packages("plotrix")
-    library(plotrix)
-  })
-  
   cellcol <- array(, dim=dim(env$M))
   for (i in 1:dim(env$colorMapping)[1]) {
     cellcol[which(env$M == (env$colorMapping)$num[i])] <- (env$colorMapping)$col[i]
@@ -545,6 +538,103 @@ starteSpiel <- function(iter_number, matrix_or_size, save_path, paths) {
 }
 
 
+#' @title Conway's Game of Life
+#' 
+#' @description 
+#' Object-oriented implementaion of a Conway's Game of Life.
+#' 
+#' @author Anastasia Aftakhova, Leila Feddoul, Selina Müller
+#'
+#' @param iter_number number of iterations of the game (life cycles) 
+#' @param matrix_or_size containing either a start matrix for the game of life or the size the start matrix should have
+#' @param save_path path where matrices are saved as images
+#' @param paths list of file paths, each containing patterns as a .txt-file
+#'
+#' @example 
+#' newgame <- conway(iter_number = 10, matrix_or_size = 100, save_path = "C:/Users/me/Documents/ConwayPatterns", paths = c("C:/Users/me/Documents/ConwayPatterns/glider.txt", "C:/Users/me/Documents/ConwayPatterns/still.txt"))
+#' 
+conway <- function(iter_number, matrix_or_size, save_path, paths) {
+  library(plotrix)
+  gameenv <- new.env()
+  if (is.matrix(matrix_or_size)) {
+    gameenv$M <- matrix_or_size
+  } else {
+    gameenv$M <- createMatrix(matrix_or_size)  
+  }
+  
+  gameenv$creatures <- getAllPatterns(paths)
+  gameenv$colorMapping <- createColorMapping(gameenv)
+  
+  game <- list(iter=0, maxiter = iter_number, savepath = save_path, env = gameenv)
+  class(game) <- "conway"
+  return(game)
+}
+
+#' @title Run Conway's game of life
+#' 
+#' @description 
+#' Main game loop. Manages creation os start matrix and its updating, as well as pattern detection 
+#' and visualization of matrix within each iteration.
+#' 
+#' @author Anastasia Aftakhova, Leila Feddoul, Selina Müller
+#'
+#' @param iter_number number of iterations of the game (life cycles) 
+#'
+#' @example 
+#' newgame <- conway(iter_number = 10, matrix_or_size = 100, save_path = "ConwayPatterns", paths = c("ConwayPatterns/still.txt"))
+#' start(newgame)
+#' 
+start.conway <- function (game) {
+  for (i in c(1:game$maxiter)) { # check if for-Loop correct
+    game$iter <- i
+    detectPatterns(game$env)
+    visualise(game$env, sprintf('Iteration %d', i));
+    #Sys.sleep(1);
+    
+    # save M if needed
+    if (i%%1 == 0) {
+      save(game$savepath, i)
+    }
+    
+    if (i%%1 == 0) {
+      summary(game)
+    }
+    
+    # setzte M zurück (= entfärben)
+    decolorM(game$env);
+    
+    # compute next live iteration
+    computeAll(game$env)
+  }
+}
+
+
+#' @title Summary
+#' 
+#' @description 
+#' Generic function. Prints out the current state of the game.
+#' 
+#' @author Anastasia Aftakhova
+#'
+#' @param game the game object instance
+#'
+#' @example 
+#' newgame <- conway(iter_number = 10, matrix_or_size = 100, save_path = "ConwayPatterns", paths = c("ConwayPatterns/still.txt"))
+#' summary(newgame)
+#
+summary.conway <- function(game) {
+  dim1 <- dim(game$env$M)[1]
+  dim2 <- dim(game$env$M)[2]
+  aliveNumber <- sum(game$env$M)
+  cat(sprintf("\nConway's Game Summary:\n"))
+  cat(sprintf("   Iteration:   %d\n", game$iter))
+  total <- dim1*dim2
+  cat(sprintf("   Spielfeld:   %d x %d (L x B)\n", dim1, dim2))
+  cat(sprintf("   Lebend:      %d   ~  %.2f%% \n", aliveNumber, aliveNumber/total*100))
+  deadNumber <- dim1*dim2 - aliveNumber
+  cat(sprintf("   Tot:         %d   ~  %.2f%% \n", deadNumber, deadNumber/total*100))
+}
+
 #-------- SET UP -------
 
 # save_path = '/home/selina/Documents/github/tmp' 
@@ -566,4 +656,6 @@ path.test <- 'color and pattern/test.txt'
 paths = array(data=c(path.blinker, path.block, path.glider, path.tub)) #,path.fourglidertub))
 
 # start the game
-starteSpiel(100, 100, save_path, paths)
+#starteSpiel(100, 100, save_path, paths)
+newgame <- conway(100, 100, save_path, paths)
+start(newgame)
