@@ -96,14 +96,19 @@ computeIsAlive <- function(N) {
 }
 
 
-#' Alternative implementation of computeIsAlive function.
-#' Decides if a given matrix cell remains alive/dead or not.
+#' @titel Check if a cell survives
+#' 
+#' @description Alternative implementation of computeIsAlive function. Decides if a given matrix cell remains alive/dead or not.
 #'
 #' @author Anastasia Aftakhova
 #' 
 #' @param N 3x3 neighbours matrix for one cell 
 #'
 #' @return binary cell value; 1 if alive; 0 if not
+#' 
+#' @examples
+#' N = matrix( c(0, 1, 1, 1, 1, 0, 0, 0, 0), nrow=3, ncol=3) 
+#' computeIsAlive2(N)
 #' 
 computeIsAlive2 <- function(N) {
   allElem <- sum(N)
@@ -153,44 +158,48 @@ computeAll <- function(env) {
 }
 
 
-#' Visualises the cell matrix in a plot.
+#' @title Visualise the game of life
+#' 
+#' @description Plots the cell matrix as a field of squares. Black cells are alive, colored cells are alive and recognized as patterns.
 #' 
 #' @author Anastasia Aftakhova
 #'
-#' @param env Environment containing the cell matrix and the color mapping
+#' @param env environment containing the cell matrix and the color mapping
 #' @param plotname name of the plotted image
 #' 
+#' @examples 
+#' env <- new.env()
+#' env$M <- array(c(0,1,0,1,0,1,0,1,0), c(3,3))
+#' env$colorMapping <- 
+#' 
 visualise <- function(env, plotname) {
-  tryCatch({
-    library(plotrix)
-  }, error = function(e) {
-    install.packages("plotrix")
-    library(plotrix)
-  })
-  
   cellcol <- array(, dim=dim(env$M))
   for (i in 1:dim(env$colorMapping)[1]) {
-    cellcol[which(env$M == env$colorMapping$num[i])] <- env$colorMapping$col[i]
+    cellcol[which(env$M == (env$colorMapping)$num[i])] <- (env$colorMapping)$col[i]
   }
   color2D.matplot(env$M, cellcolors = cellcol, border=NA, main=plotname)
 }
 
 
-#' Saves the current cell matrix plot image into the input path directory
+#' @title Save game of life matrix
+#' 
+#' @description Saves the current cell matrix plot image into the input path directory.
 #'
 #' @author Anastasia Aftakhova
 #' 
 #' @param save_path full path string of a directory to save the image into
 #' @param iter_id number of current game iteration
 #' 
+#' @examples 
+#' save('/game_snapshots', 5)
 save <- function(save_path, iter_id) {
   dev.copy(png, sprintf('%s/cgofl_%s.png', save_path, iter_id), width=500, height=500, units="px")
   dev.off()
 }
 
-#' @title generate a random matrix
+#' @title Generate a random matrix
 #'
-#' @description creates a random nxn matrix of ones and zeros.
+#' @description Creates a random nxn matrix of ones and zeros.
 #' 
 #' @author Leila Feddoul
 #' 
@@ -207,24 +216,39 @@ createMatrix <- function(matrix_size) {
 }
 
 
-#' Decolors the matrix. Replaces color numbers in the cell matrix with the default alive value.
+#' @title Remove coloring from matrix
+#' 
+#' @description Removes the coloring of patterns in the matrix. Replaces color numbers in the cell matrix with the default alive value.
 #'
 #' @author Anastasia Aftakhova
 #'
 #' @param col Environment containing the cell matrix
+#' 
+#' @examples
+#' env <- new.env()
+#' env$M <- array(c(0,5,0,5,0,1,0,2,0), c(3,3))
+#' decolorM(env)
 #' 
 decolorM <- function(env) {
   env$M[which(env$M >0)] = 1;
 }
 
 
-#' Searches for given pattern in the cell matrix and colors it if found.
+#' @title Find a pattern
+#' 
+#' @description Searches for given pattern in the cell matrix and colors it if found.
 #' 
 #' @author Anastasia Aftakhova
 #' 
 #' @param env Environment containing the cell matrix an color mapping
 #' @param pattern 2D matrix of a pattern to be recognized 
 #' @param colNum a color number which is set for alive cells of a found pattern
+#' 
+#' @examples
+#' env <- new.env()
+#' env$M <- array(c(0,1,0,1,0,1,0,1,0), c(3,3))
+#' pattern <- matrix(c(0,1,1,0), ncol=2)
+#' findPatternMatch(env, pattern, 5)
 #' 
 findPatternMatch <- function(env, pattern, colNum) {
   location = matrix(, ncol=2)
@@ -239,9 +263,9 @@ findPatternMatch <- function(env, pattern, colNum) {
   }
 }
 
-#' @titel matrix equality check
+#' @titel Matrix equality check
 #'
-#' @description checks if two matrices are equal : are both of them matrices and have the same dimension
+#' @description Checks if two matrices are equal: are both of them matrices and have the same dimension
 #' 
 #' @author Leila Feddoul
 #' 
@@ -257,7 +281,7 @@ matequal <- function(x, y)
   is.matrix(x) && is.matrix(y) && dim(x) == dim(y) && all(x == y)
 
 
-#' @titel find out pattern matching   
+#' @titel Find out pattern matching   
 #'
 #' @description Searches for given pattern in the cell matrix and colors it if found ( Alternative implementation for findPatternMatch function)
 #' 
@@ -266,6 +290,12 @@ matequal <- function(x, y)
 #' @param env Environment containing the cell matrix an color mapping
 #' @param mask 2D matrix of a pattern to be recognized 
 #' @param col a color number which is set for alive cells of a found pattern
+#' 
+#' @examples 
+#' env <- new.env()
+#' env$M <- array(c(0,1,0,1,0,1,0,1,0), c(3,3))
+#' pattern <- matrix(c(0,1,1,0), ncol=2)
+#' findPatternMatch_2(env, pattern, 5)
 #' 
 findPatternMatch_2<-function(env, mask, col)
 {
@@ -286,7 +316,7 @@ findPatternMatch_2<-function(env, mask, col)
   }
 }
 
-#' @title load masks that are saved in a txt-file
+#' @title Load masks that are saved in a txt-file
 #' 
 #' @description 
 #' Reads a .txt-file containing matrix patterns that ought to be recognized
@@ -352,16 +382,23 @@ getAllPatterns <- function(paths) {
   return(creatures);
 }
 
-#' Recognizes known patterns for a specific iteration of a game.
+#' @title Detect life patterns
+#' 
+#' @description Recognizes known patterns for a specific iteration of a game.
 #' 
 #' @author Anastasia Aftakhova
 #' 
 #' @param env Environment with specified game matrix and
 #' creature object list (= patterns or figures to recognize)
 #'
+#' @example 
+#' env <- new.env()
+#' env$M <- array(c(0,5,0,5,0,1,0,2,0), c(3,3))
+#' decolorM(env)
+#' 
 detectPatterns <- function(env) {
   for(i in env$creatures){
-    col = env$colorMapping$num[which(env$colorMapping$col == i$color)];
+    col = (env$colorMapping)$num[which((env$colorMapping)$col == i$color)];
     for(p in i$patterns){
       findPatternMatch(env, p, col);
     }
@@ -369,12 +406,19 @@ detectPatterns <- function(env) {
 }
 
 
-#' Automatically creates a color mapping for the environment 
-#' with the given creature list
+#' @title Create color mapping
+#' 
+#' @description  Automatically creates a color mapping for the environment with the given creature list.
 #'
 #' @author Anastasia Aftakhova
 #'
 #' @param env Environment with creature object list
+#' 
+#' @examples
+#' paths <- c('patterns/mynewpattern.txt') 
+#' env <- new.env()
+#' env$creatures <- getAllPatterns(paths)
+#' createColorMapping(env)
 #' 
 createColorMapping <- function(env) {
   numbers <- c(0,1)
@@ -390,7 +434,9 @@ createColorMapping <- function(env) {
 }
 
 
-#' Rotates the given matrix 90 degrees on the right
+#' @title Rotate pattern
+#' 
+#' @description Rotates the given pattern matrix 90 degrees to the right
 #'
 #' @author Anastasia Aftakhova
 #'
@@ -398,14 +444,19 @@ createColorMapping <- function(env) {
 #'
 #' @return a rotated input matrix
 #' 
+#' @examples
+#' pattern <- array(c(0,5,0,5,0,1,0,2,0), c(3,3))
+#' rotatePattern90degRight(pattern)
+#' 
 rotatePattern90degRight <- function(pattern) {
   rotatedPattern <- t(pattern[nrow(pattern):1,])
   return(rotatedPattern)
 }
 
 
-#' Adjusts creature patterns list with the rotated patterns 
-#' in order to detect all rotations of patterns
+#' @title Add rotated patterns
+#' 
+#' @description Adjusts creature patterns list with the rotated patterns in order to detect all rotations of patterns.
 #'
 #' @author Anastasia Aftakhova
 #'
@@ -413,6 +464,10 @@ rotatePattern90degRight <- function(pattern) {
 #' of 2D matrices with patterns for this "creature"
 #'
 #' @return modified creature object
+#' 
+#' @examples 
+#' creature <- load.masks("patterns/glider.txt")
+#' addRotatedPatterns(creature)
 #' 
 addRotatedPatterns <- function(creature) {
   patterns <- creature$patterns
@@ -436,11 +491,11 @@ addRotatedPatterns <- function(creature) {
   return(creature)
 }
 
-#' @title main game-loop
+#' @title Run Conway's game of life
 #' 
 #' @description 
 #' Main game loop. Manages creation os start matrix and its updating, as well as pattern detection 
-#' and visualization of matrix with each iteration
+#' and visualization of matrix within each iteration.
 #' 
 #' @author Anastasia Aftakhova, Leila Feddoul, Selina Müller
 #'
@@ -483,14 +538,111 @@ starteSpiel <- function(iter_number, matrix_or_size, save_path, paths) {
 }
 
 
+#' @title Conway's Game of Life
+#' 
+#' @description 
+#' Object-oriented implementaion of a Conway's Game of Life.
+#' 
+#' @author Anastasia Aftakhova, Leila Feddoul, Selina Müller
+#'
+#' @param iter_number number of iterations of the game (life cycles) 
+#' @param matrix_or_size containing either a start matrix for the game of life or the size the start matrix should have
+#' @param save_path path where matrices are saved as images
+#' @param paths list of file paths, each containing patterns as a .txt-file
+#'
+#' @example 
+#' newgame <- conway(iter_number = 10, matrix_or_size = 100, save_path = "C:/Users/me/Documents/ConwayPatterns", paths = c("C:/Users/me/Documents/ConwayPatterns/glider.txt", "C:/Users/me/Documents/ConwayPatterns/still.txt"))
+#' 
+conway <- function(iter_number, matrix_or_size, save_path, paths) {
+  library(plotrix)
+  gameenv <- new.env()
+  if (is.matrix(matrix_or_size)) {
+    gameenv$M <- matrix_or_size
+  } else {
+    gameenv$M <- createMatrix(matrix_or_size)  
+  }
+  
+  gameenv$creatures <- getAllPatterns(paths)
+  gameenv$colorMapping <- createColorMapping(gameenv)
+  
+  game <- list(iter=0, maxiter = iter_number, savepath = save_path, env = gameenv)
+  class(game) <- "conway"
+  return(game)
+}
+
+#' @title Run Conway's game of life
+#' 
+#' @description 
+#' Main game loop. Manages creation os start matrix and its updating, as well as pattern detection 
+#' and visualization of matrix within each iteration.
+#' 
+#' @author Anastasia Aftakhova, Leila Feddoul, Selina Müller
+#'
+#' @param iter_number number of iterations of the game (life cycles) 
+#'
+#' @example 
+#' newgame <- conway(iter_number = 10, matrix_or_size = 100, save_path = "ConwayPatterns", paths = c("ConwayPatterns/still.txt"))
+#' start(newgame)
+#' 
+start.conway <- function (game) {
+  for (i in c(1:game$maxiter)) { # check if for-Loop correct
+    game$iter <- i
+    detectPatterns(game$env)
+    visualise(game$env, sprintf('Iteration %d', i));
+    #Sys.sleep(1);
+    
+    # save M if needed
+    if (i%%1 == 0) {
+      save(game$savepath, i)
+    }
+    
+    if (i%%1 == 0) {
+      summary(game)
+    }
+    
+    # setzte M zurück (= entfärben)
+    decolorM(game$env);
+    
+    # compute next live iteration
+    computeAll(game$env)
+  }
+}
+
+
+#' @title Summary
+#' 
+#' @description 
+#' Generic function. Prints out the current state of the game.
+#' 
+#' @author Anastasia Aftakhova
+#'
+#' @param game the game object instance
+#'
+#' @example 
+#' newgame <- conway(iter_number = 10, matrix_or_size = 100, save_path = "ConwayPatterns", paths = c("ConwayPatterns/still.txt"))
+#' summary(newgame)
+#
+summary.conway <- function(game) {
+  dim1 <- dim(game$env$M)[1]
+  dim2 <- dim(game$env$M)[2]
+  aliveNumber <- sum(game$env$M)
+  cat(sprintf("\nConway's Game Summary:\n"))
+  cat(sprintf("   Iteration:   %d\n", game$iter))
+  total <- dim1*dim2
+  cat(sprintf("   Spielfeld:   %d x %d (L x B)\n", dim1, dim2))
+  cat(sprintf("   Lebend:      %d   ~  %.2f%% \n", aliveNumber, aliveNumber/total*100))
+  deadNumber <- dim1*dim2 - aliveNumber
+  cat(sprintf("   Tot:         %d   ~  %.2f%% \n", deadNumber, deadNumber/total*100))
+}
+
 #-------- SET UP -------
 
 # save_path = '/home/selina/Documents/github/tmp' 
 # save_path = '/home/te74zej/Dokumente/M.Sc./SS2017/Programmierung  mit R/Projekt/game_test'
 # setwd('/home/te74zej/Dokumente/M.Sc./SS2017/Programmierung  mit R/Projekt/ConwayGame')
 # save_path = 'C:/Users/aftak/Documents/FSU/M.Sc/SS2017/Programmierung mit R/conway_snapshots'
-setwd('/home/te74zej/Dokumente/M.Sc./SS2017/Programmierung  mit R/uebungen')
-save_path = '/home/te74zej/Dokumente/M.Sc./SS2017/Programmierung  mit R/uebungen/game_snapshots'
+# setwd('/home/te74zej/Dokumente/M.Sc./SS2017/Programmierung  mit R/uebungen')
+# save_path = '/home/te74zej/Dokumente/M.Sc./SS2017/Programmierung  mit R/uebungen/game_snapshots'
 
 #--------  TEST -------
 
@@ -504,4 +656,6 @@ path.test <- 'color and pattern/test.txt'
 paths = array(data=c(path.blinker, path.block, path.glider, path.tub)) #,path.fourglidertub))
 
 # start the game
-starteSpiel(100, 100, save_path, paths)
+#starteSpiel(100, 100, save_path, paths)
+newgame <- conway(100, 100, save_path, paths)
+start(newgame)
